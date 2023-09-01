@@ -1,16 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import db
 import utils
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
 connection = db.connect_to_database()
 app.secret_key = "u29h3e29h2e91h2e9w2jmqw09h23jq9hq"
+limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["10 per minute"])
 
-@app.route('/')
+
+
+@app.route('/home')
 def index():
-    if 'username' in session:
-            return f"Welcome, {session['username']}!"
-    return "You are not logged in."
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -44,7 +47,7 @@ def sign_up():
         username = request.form['username']
         password = request.form['password']
 
-        user = db.get_user(connection, username)
+        user = db.get_user(connection, email,username)
         if user:
             flash("Username or Email already exists. Please try again !", "danger")
             return render_template('signup.html')
@@ -63,3 +66,4 @@ def logout():
 if __name__ == '__main__':
     db.init_db(connection)
     app.run(debug=True)
+    
