@@ -28,10 +28,10 @@ def add_user(connection,first_name,last_name,email, username, password):
     cursor.execute(query, (first_name,last_name,email,username, hashed_password))
     connection.commit()
 
-def get_user(connection, username):
+def get_user(connection, email, username):
     cursor = connection.cursor()
-    query = '''SELECT * FROM users WHERE username = ?'''
-    cursor.execute(query, (username,))
+    query = '''SELECT * FROM users WHERE email = ? OR username =?'''
+    cursor.execute(query, (email, username))
     return cursor.fetchone()
 
 

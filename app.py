@@ -15,10 +15,11 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
+        email = request.form['emailorUsername']
+        username = request.form['emailorUsername']
         password = request.form['password']
 
-        user = db.get_user(connection, email)
+        user = db.get_user(connection, email, username)
         
         if user:
             if utils.is_password_match(password, user[5]):
@@ -39,7 +40,7 @@ def sign_up():
     if request.method == 'POST':
         first_name=request.form['first_name']
         last_name=request.form['last_name']
-        email=request.form['email']
+        email =request.form['email']
         username = request.form['username']
         password = request.form['password']
 
