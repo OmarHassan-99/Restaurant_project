@@ -7,7 +7,7 @@
 
         
         body{
-            background-image: url('photo.jpg');
+            background-image: url('assets\images\photo.jpg');
             background-repeat: no-repeat;
             background-position-x:center;
             background-size: 2000px;
@@ -68,16 +68,17 @@
 
 
 
+      {% include 'includes/alert.html' %}
     <div class="container">
         <h2 class="text-center">Login</h2>
         <form class="centered-form">
             <div class="form-group">
                 <label for="email">Email :</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter email">
+                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
             </div>
             <div class="form-group">
                 <label for="password">Password :</label>
-                <input type="password" class="form-control" id="password" placeholder="Enter password">
+                <input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
             </div>
             <div class="text-center">
             <button type="submit" class="btn btn-primary ">Login</button>
