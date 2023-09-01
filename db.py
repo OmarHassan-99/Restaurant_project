@@ -79,3 +79,8 @@ def get_all_restaurants(connection):
     query = '''SELECT * FROM restaurants'''
     cursor.execute(query)
     return cursor.fetchall()
+
+
+def seed_admin_user(connection):
+    admin_username = 'admin'
+    admin_password = 'admin'

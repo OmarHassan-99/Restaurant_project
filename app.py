@@ -11,9 +11,10 @@ limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["10 per 
 
 
 
-@app.route('/home')
+@app.route('/')
 def index():
-    return render_template('index.html')
+            return render_template("index.html")
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
