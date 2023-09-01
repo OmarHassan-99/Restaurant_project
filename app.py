@@ -12,8 +12,9 @@ limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["10 per 
 
 
 @app.route('/home')
-def index():
-    return render_template('index.html')
+def home():
+    if 'username' in session:
+        return render_template('index.html', restaurants = db.get_all_restaurants(connection))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -27,7 +28,7 @@ def login():
         if user:
             if utils.is_password_match(password, user[5]):
                 session['email'] = user[3]
-                return redirect(url_for('index'))
+                return redirect(url_for('home'))
             else:
                 flash("Password dose not match", "danger")
                 return render_template('login.html')
@@ -57,6 +58,29 @@ def sign_up():
             return redirect(url_for('login'))
 
     return render_template('signup.html')
+
+@app.route('/upload-restaurant', methods=['GET', 'POST'])
+def uploadRest():
+    if 'username' in session:
+        if session['username'] == 'admin':
+            if request.method == 'POST':
+
+                title = request.form['title']
+                description = request.form['description']
+                restaurant_image = request.files['image']
+                imagePath = f"static/uploads/{restaurant_image.filename}"
+                restaurant_image.save(imagePath)
+                db.add_restaurant(connection, title, description, imagePath)
+                restaurants = db.get_all_restaurants(connection)
+                
+                if not restaurants:
+                    flash("No data found..", "danger")
+                return redirect(url_for('home'))
+            
+            return render_template('upload-restaurant.html')
+        else:
+            flash('Unauthorized user..', 'danger')
+            return redirect(url_for('home'))
 
 @app.route('/logout')
 def logout():
