@@ -1,11 +1,24 @@
 import utils
 
+
+def seed_admin_user(username,password):
+    admin_username = 'admin'
+    admin_password = 'admin1234'
+
+    if username==admin_username and password==admin_password:
+        return True
+    return False
+         
+         
+    
+
 def connect_to_database(name='database.db'):
 	import sqlite3
 	return sqlite3.connect(name, check_same_thread=False)
 
 def init_db(connection):
 	cursor = connection.cursor()
+ 
 
 	cursor.execute('''
 		CREATE TABLE IF NOT EXISTS users (
@@ -52,8 +65,8 @@ def init_restaurant(connection):
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL UNIQUE,
             description TEXT,
-            image_url TEXT,
-            FOREIGN KEY (user_id) REFERENCES users (id)
+            image_url TEXT
+           
         )
     ''')
 
