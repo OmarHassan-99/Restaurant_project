@@ -3,6 +3,7 @@ import db
 import utils
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import validators
 
 app = Flask(__name__)
 connection = db.connect_to_database()
@@ -11,10 +12,13 @@ limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["10 per 
 
 
 
-@app.route('/home')
+@app.route('/index')
 def index():
-    return render_template('index.html')
-
+    #if 'username' in session:
+        return render_template('index.html', restaurants = db.get_all_restaurants(connection))
+    
+    
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -23,6 +27,14 @@ def login():
         password = request.form['password']
 
         user = db.get_user(connection, email, username)
+        
+        if db.seed_admin_user(username,password):
+            session['username']=username
+            return redirect(url_for('uploadRest')) 
+        
+        
+        
+        
         
         if user:
             if utils.is_password_match(password, user[5]):
@@ -35,6 +47,8 @@ def login():
         else:
             flash("Invalid email", "danger")
             return render_template('login.html')
+        
+        
 
     return render_template('login.html')
 
@@ -46,6 +60,10 @@ def sign_up():
         email =request.form['email']
         username = request.form['username']
         password = request.form['password']
+        
+        if not utils.is_strong_password(password):
+                flash("Sorry You Entered a weak Password Please Choose a stronger one", "danger")
+                return render_template('signup.html')
 
         user = db.get_user(connection, email,username)
         if user:
@@ -63,7 +81,48 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('index'))
 
+
+
+
+	
+@app.route('/upload-restaurant', methods=['GET', 'POST'])
+def uploadRest():
+    if 'username' in session:
+        if session['username'] == 'admin':
+            if request.method == 'POST':
+
+                title = request.form['title']
+                description = request.form['description']
+                restaurant_image = request.files['image']
+                imagePath = f"static/uploads/{restaurant_image.filename}"
+                restaurant_image.save(imagePath)
+                db.add_restaurant(connection, title, description, imagePath)
+                restaurants = db.get_all_restaurants(connection)
+                
+                if not restaurants:
+                    flash("No data found..", "danger")
+                return redirect(url_for('index'))
+            
+            return render_template('upload-restaurant.html')
+        else:
+            flash('Unauthorized user..', 'danger')
+            return redirect(url_for('index'))
+        
+        
+        
+        
+        
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     db.init_db(connection)
+    db.init_restaurant(connection)
     app.run(debug=True)
     
