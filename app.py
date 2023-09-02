@@ -23,10 +23,9 @@ def restaurant():
 @app.route('/restaurant/<restaurant_id>',methods=['GET','POST'])
 def getrestaurant(restaurant_id):
     # Retrieve restaurant information and comments from the database
-    restaurant = db.get_restaurant(connection, restaurant_id)
     # comments = db.get_comments_for_restaurant(connection, restaurant[0])
 
-    return render_template('restaurant.html', restaurant)
+    return render_template('view-restaurant.html', restaurant=db.get_restaurant(connection, restaurant_id))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -44,6 +43,7 @@ def login():
         if user:
             if utils.is_password_match(password, user[5]):
                 session["email"] = user[3]
+                session['username'] = user[4]
                 return redirect(url_for("restaurant"))
             else:
                 flash("Password dose not match", "danger")
@@ -87,7 +87,7 @@ def sign_up():
 @app.route("/logout")
 def logout():
     session.pop("username", None)
-    return redirect(url_for("restaurant"))
+    return redirect(url_for("login"))
 
 @app.route("/admin")
 def admin():
@@ -96,53 +96,37 @@ def admin():
 
 @app.route("/UploadRestaurant", methods=["GET", "POST"])
 def uploadRest():
-    # if "username" in session:
-    #     if session["username"] == 'admin':
-    #         if request.method == "POST":
-    #             title = request.form["title"]
-    #             description = request.form["description"]
-    #             restaurant_image = request.files["image"]
-    #             imagePath = f"uploads/{restaurant_image.filename}"
-    #             restaurant_image.save('static/' + imagePath)
-    #             db.add_restaurant(connection, title, description, imagePath)
-    #             # restaurants = db.get_all_restaurants(connection)
-    #             return redirect(url_for('restaurant'))
-    #             # if not restaurants:
-    #             #     flash("No data found..", "danger")
-    #             else:
-    #                   flash("Unauthorized user..", "danger")
-    #                   return redirect(url_for("restaurant"))
-        if request.method == 'POST':
-            try:
-                if not 'username' in session:
-                    flash("You Are Not Logged In", "danger")
-                    return redirect(url_for('login'))
-                if session['username'] != 'admin':
-                    flash("Unauthorized user..", "danger")
-                    return redirect(url_for("restaurant"))
+    if request.method == 'POST':
+        try:
+            if not 'username' in session:
+                flash("You Are Not Logged In", "danger")
+                return redirect(url_for('login'))
+            if session['username'] != 'admin':
+                flash("Unauthorized user..", "danger")
+                return redirect(url_for("restaurant"))
 
-                restaurant_image = request.files['image']
-                if not restaurant_image or restaurant_image.filename == '':
-                    flash("Image Is Required", "danger")
-                    return render_template("UploadRestaurant.html")
+            restaurant_image = request.files['image']
+            if not restaurant_image or restaurant_image.filename == '':
+                flash("Image Is Required", "danger")
+                return render_template("UploadRestaurant.html")
 
-                # if  not (validators.allowed_file(gadgetImage.filename)) or not validators.allowed_file_size(gadgetImage):
-                #     flash("Invalid File is Uploaded", "danger")
-                #     return render_template("UploadRestaurant.html")
+            # if  not (validators.allowed_file(gadgetImage.filename)) or not validators.allowed_file_size(gadgetImage):
+            #     flash("Invalid File is Uploaded", "danger")
+            #     return render_template("UploadRestaurant.html")
 
-                title = request.form['title']
-                description = request.form['description']
+            title = request.form['title']
+            description = request.form['description']
 
-                image_url = f"uploads/{restaurant_image.filename}"
-                restaurant_image.save(os.path.join("static",image_url))
-                
-                db.add_restaurant(connection, title, description, image_url)
-            except:
-                print("ex")
-            return redirect(url_for('restaurant'))
+            image_url = f"uploads/{restaurant_image.filename}"
+            restaurant_image.save(os.path.join("static",image_url))
             
+            db.add_restaurant(connection, title, description, image_url)
+        except:
+            print("ex")
+        return redirect(url_for('restaurant'))
+        
 
-        return render_template("UploadRestaurant.html")
+    return render_template("UploadRestaurant.html")
         
 
 
