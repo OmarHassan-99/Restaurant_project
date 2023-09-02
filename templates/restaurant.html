@@ -34,7 +34,7 @@
         <img src="../static/images/jm.png" class="img-fluid img-thumbnail" width="250" height="200">
       </div>
       {% for restaurant in restaurants %}
-      
+
         <div class="col-2 col-md-6">
           <h2>{{ restaurant[1] }}</h2>
           <pre>
@@ -42,7 +42,7 @@
           </pre>
           <img src="{{ url_for('static', filename=restaurant[3]) }}" class="img-fluid img-thumbnail" width="250" height="200">
         </div>
-          
+
       {% endfor %}
     </div>
   </div>

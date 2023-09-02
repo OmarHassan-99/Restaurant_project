@@ -20,11 +20,7 @@ def restaurant():
     if 'username' in session:
         return render_template("restaurant.html", restaurants=db.get_all_restaurants(connection))
 
-@app.route('/restaurant/<restaurant_id>',methods=['GET','POST'])
-def getrestaurant(restaurant_id):
-    # Retrieve restaurant information and comments from the database
-    restaurant = db.get_restaurant(connection, restaurant_id)
-    # comments = db.get_comments_for_restaurant(connection, restaurant[0])
+
 
     return render_template('restaurant.html', restaurant)
 
@@ -96,22 +92,6 @@ def admin():
 
 @app.route("/UploadRestaurant", methods=["GET", "POST"])
 def uploadRest():
-    # if "username" in session:
-    #     if session["username"] == 'admin':
-    #         if request.method == "POST":
-    #             title = request.form["title"]
-    #             description = request.form["description"]
-    #             restaurant_image = request.files["image"]
-    #             imagePath = f"uploads/{restaurant_image.filename}"
-    #             restaurant_image.save('static/' + imagePath)
-    #             db.add_restaurant(connection, title, description, imagePath)
-    #             # restaurants = db.get_all_restaurants(connection)
-    #             return redirect(url_for('restaurant'))
-    #             # if not restaurants:
-    #             #     flash("No data found..", "danger")
-    #             else:
-    #                   flash("Unauthorized user..", "danger")
-    #                   return redirect(url_for("restaurant"))
         if request.method == 'POST':
             try:
                 if not 'username' in session:
@@ -126,9 +106,9 @@ def uploadRest():
                     flash("Image Is Required", "danger")
                     return render_template("UploadRestaurant.html")
 
-                # if  not (validators.allowed_file(gadgetImage.filename)) or not validators.allowed_file_size(gadgetImage):
-                #     flash("Invalid File is Uploaded", "danger")
-                #     return render_template("UploadRestaurant.html")
+                if  not (validators.allowed_file(restaurant_image.filename)) or not validators.allowed_file_size(restaurant_image):
+                    flash("Invalid File is Uploaded", "danger")
+                    return render_template("UploadRestaurant.html")
 
                 title = request.form['title']
                 description = request.form['description']
@@ -143,10 +123,35 @@ def uploadRest():
             
 
         return render_template("UploadRestaurant.html")
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+@app.route('/restaurant/<restaurant_id>',methods=['GET','POST'])
+def getrestaurant(restaurant_id):
+	
+	restaurant = db.get_restaurant(connection, restaurant_id)
+	comments = db.get_comments_for_restaurant(connection, restaurant[0])
+
+	return render_template('restaurant.html', restaurant=restaurant, comments=comments)
+
+@app.route('/add-comment/<restaurant_id>', methods=['POST'])
+def addComment(restaurant_id):
+	text = request.form['comment']
+	user_id = session['user_id']
+	db.add_comment(connection, restaurant_id, user_id, text)
+	return redirect(url_for("getrestaurant", restaurant_id=restaurant_id))
         
 
 
 if __name__ == "__main__":
     db.init_db(connection)
     db.init_restaurant(connection)
+    db.init_comments_table(connection)
     app.run(debug=True)
