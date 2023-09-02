@@ -110,9 +110,9 @@ def uploadRest():
                 flash("Image Is Required", "danger")
                 return render_template("UploadRestaurant.html")
 
-            # if  not (validators.allowed_file(gadgetImage.filename)) or not validators.allowed_file_size(gadgetImage):
-            #     flash("Invalid File is Uploaded", "danger")
-            #     return render_template("UploadRestaurant.html")
+                # if  not (validators.allowed_file(gadgetImage.filename)) or not validators.allowed_file_size(gadgetImage):
+                #     flash("Invalid File is Uploaded", "danger")
+                #     return render_template("UploadRestaurant.html")
 
             title = request.form['title']
             description = request.form['description']
@@ -126,11 +126,12 @@ def uploadRest():
         return redirect(url_for('restaurant'))
         
 
-    return render_template("UploadRestaurant.html")
+        return render_template("UploadRestaurant.html")
         
 
 
 if __name__ == "__main__":
     db.init_db(connection)
     db.init_restaurant(connection)
+    db.init_comments_table(connection)
     app.run(debug=True)
