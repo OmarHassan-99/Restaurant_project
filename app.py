@@ -18,14 +18,20 @@ limiter = Limiter(
 def restaurant():
     # 
     if 'username' in session:
-        return render_template("restaurant.html", restaurants=db.get_all_restaurants(connection))
+        return render_template("restaurant.html", restaurants=db.get_all_restaurants(connection), username= session['username'])
 
 @app.route('/restaurant/<restaurant_id>',methods=['GET','POST'])
 def getrestaurant(restaurant_id):
-    # Retrieve restaurant information and comments from the database
-    # comments = db.get_comments_for_restaurant(connection, restaurant[0])
+    if request.method == 'POST':
+        review = request.form['review']
+        rating = request.form['rating']
+        user_id = session['user_id']
+        db.add_review(connection, user_id, restaurant_id, rating, review)
+        return redirect(url_for("getrestaurant", restaurant_id=restaurant_id))
+    else:
+        return render_template('view-restaurant.html', restaurant=db.get_restaurant(connection, restaurant_id), reviews = db.get_reviews_for_restaurant(connection, restaurant_id))
 
-    return render_template('view-restaurant.html', restaurant=db.get_restaurant(connection, restaurant_id))
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -38,12 +44,13 @@ def login():
 
         if db.seed_admin_user(username, password):
             session["username"] = username
-            return redirect(url_for("uploadRest"))
+            #session['user_id'] = user[0]
+            return render_template("restaurant.html", restaurants=db.get_all_restaurants(connection) , username=session['username'])
 
         if user:
             if utils.is_password_match(password, user[5]):
-                session["email"] = user[3]
                 session['username'] = user[4]
+                session['user_id'] = user[0]
                 return redirect(url_for("restaurant"))
             else:
                 flash("Password dose not match", "danger")
@@ -87,12 +94,14 @@ def sign_up():
 @app.route("/logout")
 def logout():
     session.pop("username", None)
+
+    session.pop("user_id", None)
     return redirect(url_for("login"))
 
-@app.route("/admin")
-def admin():
-    if request.method == "GET":
-        return render_template("admin.html")
+# @app.route("/admin")
+# def admin():
+#     if request.method == "GET":
+#         return render_template("admin.html")
 
 @app.route("/UploadRestaurant", methods=["GET", "POST"])
 def uploadRest():
@@ -133,5 +142,5 @@ def uploadRest():
 if __name__ == "__main__":
     db.init_db(connection)
     db.init_restaurant(connection)
-    db.init_comments_table(connection)
+    db.init_reviews(connection)
     app.run(debug=True)

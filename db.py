@@ -93,37 +93,38 @@ def get_all_restaurants(connection):
     cursor.execute(query)
     return cursor.fetchall()
 
-def init_comments_table(connection):
+def init_reviews(connection):
     cursor = connection.cursor()
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS comments (
+        CREATE TABLE IF NOT EXISTS reviews (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            restaurant_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
-            text TEXT NOT NULL,
+            restaurant_id INTEGER NOT NULL,
+            rating INTEGER NOT NULL,
+            review TEXT NOT NULL,
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (restaurant_id) REFERENCES restaurants (id),
-            FOREIGN KEY (user_id) REFERENCES users (id)
+            FOREIGN KEY (user_id) REFERENCES users (id),
+            FOREIGN KEY (restaurant_id) REFERENCES restaurants (id)
+           
         )
     ''')
 
     connection.commit()
-    
 
-def add_comment(connection, restaurant_id, user_id, text):
+def add_review(connection, user_id, restaurant_id, rating, review):
     cursor = connection.cursor()
-    query = '''INSERT INTO comments (restaurant_id, user_id, text) VALUES (?, ?, ?)'''
-    cursor.execute(query, (restaurant_id, user_id, text))
+    query = '''INSERT INTO reviews (user_id, restaurant_id, rating, review) VALUES (?, ?, ?, ?)'''
+    cursor.execute(query, (user_id, restaurant_id, rating, review))
     connection.commit()
 
-def get_comments_for_restaurant(connection, restaurant_id):
+def get_reviews_for_restaurant(connection, restaurant_id):
     cursor = connection.cursor()
     query = '''
-        SELECT  users.username, comments.text, comments.timestamp
-        FROM comments
-        JOIN users ON comments.user_id = users.id
-        WHERE comments.restaurant_id = ?
+        SELECT  users.username, reviews.review, reviews.timestamp, reviews.rating
+        FROM reviews
+        JOIN users ON reviews.user_id = users.id
+        WHERE reviews.restaurant_id = ?
     '''
     cursor.execute(query, (restaurant_id,))
     return cursor.fetchall()

@@ -22,12 +22,19 @@
           <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
         </li>
         
+        {% if 'username' not in session %}
         <li class="nav-item">
           <a class="nav-link" href="/signup">Signup</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/login">Login</a>
         </li>
+        {% endif %}
+        {% if username == admin %}
+        <li class="nav-item">
+          <a class="nav-link" href="/UploadRestaurant">Upload Restaurant</a>
+        </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link" href="/logout">Logout</a>
         </li>
@@ -41,15 +48,16 @@
   <div class="row text-center">
     <div class="col-12">
       <h1>The number one website for restaurants reviews in the world!</h1>
+      {% if 'username' not in session %}
       <div class=" alert alert-info alert-dismissible" role="alert">To submit a rating or write a review you have to
         be logged in ! </div>
-
+      {% endif %}
     </div>
   </div>
   <div class="container">
     {% include 'includes/alert.html' %}
 
-    <div class="row " id="menu_items">
+    <!-- <div class="row " id="menu_items">
       <div class="col-2 col-md-6">
         <h2>El 3abasseya Restaurant</h2>
         <p>el abbaseya street, street 15 behind Ain Shams university</p>
@@ -59,17 +67,18 @@
         <h2>Just smash</h2>
         <p>٥٤ شارع عمارات مصر التعمير متفرع من, Abd El-Hameed Badawi, Cairo Governorate</p>
         <img src="../static/images/jm.png" class="img-fluid img-thumbnail" width="250" height="200">
-      </div>
+      </div> -->
       {% for restaurant in restaurants %}
-
-        <div class="col-2 col-md-6">
+      
+        <div class="col-2 col-md-6 d-flex flex-column">
           <h2>{{ restaurant[1] }}</h2>
           <pre>
 {{restaurant[2]}}
           </pre>
           <img src="{{ url_for('static', filename=restaurant[3]) }}" class="img-fluid img-thumbnail" width="250" height="200">
-          <a class="btn btn-primary float-end" href="{{ url_for('getrestaurant', restaurant_id=restaurant[0]) }}"
-          >View</a>
+          <div>
+            <a class="btn btn-primary float-end mt-3" href="{{ url_for('getrestaurant', restaurant_id=restaurant[0]) }}">View</a>
+          </div>
         </div>
 
       {% endfor %}
