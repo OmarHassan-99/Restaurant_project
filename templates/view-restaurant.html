@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css%22%3E">
+    <title>{{restaurant[1]}}</title>
+</head>
+
+<body class="">
+    <div class="container-fluid">
+        {% include 'includes/alert.html' %}
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-9 form-container p-4 mt-5 me-1">
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <img src="{{url_for('static', filename=restaurant[3])}}" alt="" width="150" class="img-fluid" />
+                    </div>
+                    <div class="col">
+                        <h2>{{restaurant[1]}}</h2>
+                        <p>{{restaurant[2]}}</p>
+                    </div>
+                </div>
+                <hr />
+                <div>
+                    {% for comment in comments %}
+                    <div class="col-md-12 col-lg-12 py-2 px-3 mt-1 border border-3">
+                        <h5>{{comment[0]}} | <small>{{comment[2]}}</small></h5>
+                        <hr />
+                        <p>{{comment[1]}}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <hr />
+                <form class="login-form" method="post"
+                    action="{{ url_for('addComment', restaurant_id=restaurant[0]) }}">
+                    <div class="mb-3">
+                        <textarea type="" class="form-control" placeholder="Comment" required name="comment"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
