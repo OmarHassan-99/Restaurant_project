@@ -3,8 +3,9 @@ import db
 import utils
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-import validators
+import validators         
 import os
+
 
 app = Flask(__name__)
 connection = db.connect_to_database()
@@ -119,9 +120,9 @@ def uploadRest():
                 flash("Image Is Required", "danger")
                 return render_template("UploadRestaurant.html")
 
-                # if  not (validators.allowed_file(gadgetImage.filename)) or not validators.allowed_file_size(gadgetImage):
-                #     flash("Invalid File is Uploaded", "danger")
-                #     return render_template("UploadRestaurant.html")
+            if  not (validators.allowed_file(restaurant_image.filename)) or not validators.allowed_file_size(restaurant_image):
+                flash("Invalid File is Uploaded", "danger")
+                return render_template("UploadRestaurant.html")
 
             title = request.form['title']
             description = request.form['description']
@@ -134,7 +135,11 @@ def uploadRest():
             print("ex")
         return redirect(url_for('restaurant'))
     return render_template("UploadRestaurant.html")
-        
+
+
+@app.route('/')
+def index():
+   return render_template("index.html")
 
 
 if __name__ == "__main__":

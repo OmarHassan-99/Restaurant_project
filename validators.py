@@ -1,6 +1,6 @@
 import os
 # Set allowed file extensions and maximum file size in bytes
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'jfif'}
 MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024  # 10MB
 
 # Function to check if the file extension is allowed
