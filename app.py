@@ -133,9 +133,7 @@ def uploadRest():
         except:
             print("ex")
         return redirect(url_for('restaurant'))
-        
-
-        return render_template("UploadRestaurant.html")
+    return render_template("UploadRestaurant.html")
         
 
 

@@ -121,7 +121,7 @@ def add_review(connection, user_id, restaurant_id, rating, review):
 def get_reviews_for_restaurant(connection, restaurant_id):
     cursor = connection.cursor()
     query = '''
-        SELECT  users.username, reviews.review, reviews.timestamp, reviews.rating
+        SELECT  users.first_name, users.last_name, reviews.review, reviews.rating, reviews.timestamp
         FROM reviews
         JOIN users ON reviews.user_id = users.id
         WHERE reviews.restaurant_id = ?
