@@ -14,17 +14,37 @@ limiter = Limiter(
 )
 
 
-@app.route("/home")
+# @app.route("/home")
+# def restaurant():
+#     if 'username' in session:
+#         return render_template("restaurant.html", restaurants=db.get_all_restaurants(connection), username= session['username'])
+
+    
+@app.route('/home', methods=['GET', 'POST'])
 def restaurant():
-    # 
     if 'username' in session:
-        return render_template("restaurant.html", restaurants=db.get_all_restaurants(connection), username= session['username'])
+        if request.method == 'POST':
+            # searchtext = request.args.get('search')
+            searchtext = request.form['search']
+            results = db.search_restaurants(connection, searchtext)
+            # print('searching..')
+            return render_template('restaurant.html', restaurants=results, username= session['username'])
+        return render_template('restaurant.html', restaurants=db.get_all_restaurants(connection), username= session['username'])
+    return redirect(url_for(login))
 
 @app.route('/restaurant/<restaurant_id>',methods=['GET','POST'])
 def getrestaurant(restaurant_id):
     if request.method == 'POST':
         review = request.form['review']
-        rating = request.form['rating']
+        try:
+            rating = int(request.form['rating'])
+        except:
+            flash("Rating from 0-10","danger")
+            return render_template('view-restaurant.html', restaurant=db.get_restaurant(connection, restaurant_id), reviews = db.get_reviews_for_restaurant(connection, restaurant_id))
+
+        if rating > 10 or rating < 0 :
+            flash("Rating out of 10!","danger")
+            return render_template('view-restaurant.html', restaurant=db.get_restaurant(connection, restaurant_id), reviews = db.get_reviews_for_restaurant(connection, restaurant_id))
         user_id = session['user_id']
         db.add_review(connection, user_id, restaurant_id, rating, review)
         return redirect(url_for("getrestaurant", restaurant_id=restaurant_id))
@@ -53,11 +73,11 @@ def login():
                 session['user_id'] = user[0]
                 return redirect(url_for("restaurant"))
             else:
-                flash("Password dose not match", "danger")
+                flash("Password does not match!", "danger")
                 return render_template("login.html")
 
         else:
-            flash("Invalid email", "danger")
+            flash("Invalid email or password!", "danger")
             return render_template("login.html")
 
     return render_template("login.html")
@@ -119,9 +139,9 @@ def uploadRest():
                 flash("Image Is Required", "danger")
                 return render_template("UploadRestaurant.html")
 
-                # if  not (validators.allowed_file(gadgetImage.filename)) or not validators.allowed_file_size(gadgetImage):
-                #     flash("Invalid File is Uploaded", "danger")
-                #     return render_template("UploadRestaurant.html")
+            if  not (validators.allowed_file(restaurant_image.filename)) or not validators.allowed_file_size(restaurant_image):
+                flash("Invalid File is Uploaded", "danger")
+                return render_template("UploadRestaurant.html")
 
             title = request.form['title']
             description = request.form['description']
