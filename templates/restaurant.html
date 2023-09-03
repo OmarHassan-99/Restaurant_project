@@ -47,9 +47,9 @@
     <div class="col-12 my-2">
       <h1>The number one website for restaurants reviews in the world!</h1>
       <div class="container">
-      
-      <hr>
-    </div>
+
+        <hr>
+      </div>
       {% if 'username' not in session %}
       <div class=" alert alert-info alert-dismissible" role="alert">To submit a rating or write a review you have to
         be logged in ! </div>
@@ -59,19 +59,25 @@
   <div class="container">
     {% include 'includes/alert.html' %}
     <div class="row">
-      
+
       {% for restaurant in restaurants %}
 
-      <div class="col-3 col-md-4 d-inline-flex mt-3">
-        <div class="d-flex flex-column">
-          <h2>{{ restaurant[1] }}</h2>
-          <pre>
+      <div class="col-md-4 mt-3">
+        <div class="d-flex flex-column text-center" style="height: 400px;">
+          <div>
+            <h2>{{ restaurant[1] }}</h2>
+          </div>
+          <div>
+            <pre>
 {{restaurant[2]}}
             </pre>
-          <img src="{{ url_for('static', filename=restaurant[3]) }}" class="img-fluid img-thumbnail" width="250"
-            height="200">
+          </div>
+          <div class="mb-auto">
+            <img src="{{ url_for('static', filename=restaurant[3]) }}" class="img-fluid img-thumbnail" width="250"
+              height="200">
+          </div>
           <div>
-            <a class="btn btn-primary float-end mt-3"
+            <a class="btn btn-primary float-end w-50"
               href="{{ url_for('getrestaurant', restaurant_id=restaurant[0]) }}">View</a>
           </div>
         </div>
