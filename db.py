@@ -132,7 +132,8 @@ def get_reviews_for_restaurant(connection, restaurant_id):
 def search_restaurants(connection, searchkey):
     cursor = connection.cursor()
     query = '''
-        SELECT * FROM restaurants WHERE title like (?) OR description like (?)
+        SELECT * FROM restaurants
+        WHERE title like '%' || (?) || '%' or description like '%' || (?) || '%'
     '''
     cursor.execute(query, (searchkey,searchkey))
     return cursor.fetchall()
