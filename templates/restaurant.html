@@ -7,12 +7,16 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
   <title>Home</title>
-
+  <style>
+    .title {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+  </style>
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">The Foodie Review</a>
+    <a class="navbar-brand" href="/home">The Foodie Review</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll"
       aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -37,15 +41,15 @@
           <a class="nav-link" href="/logout">Logout</a>
         </li>
       </ul>
-      <form class="d-flex">
-        <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search">
+      <form action="/home" method="post" class="d-flex">
+        <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search" name="search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
     </div>
   </nav>
   <div class="row text-center">
-    <div class="col-12 my-2">
-      <h1>The number one website for restaurants reviews in the world!</h1>
+    <div class="col-12 my-4">
+      <h2 class="title">The number one website for restaurants reviews in the world!</h2>
       <div class="container">
 
         <hr>
@@ -59,7 +63,18 @@
   <div class="container">
     {% include 'includes/alert.html' %}
     <div class="row">
-
+      <!-- <div class="row " id="menu_items">
+      <div class="col-2 col-md-6">
+        <h2>El 3abasseya Restaurant</h2>
+        <p>el abbaseya street, street 15 behind Ain Shams university</p>
+        <img src="../static/images/logo food light.png" class="img-fluid img-thumbnail" width="250" height="200">
+      </div>
+      <div class="col-2 col-md-6">
+        <h2>Just smash</h2>
+        <p>٥٤ شارع عمارات مصر التعمير متفرع من, Abd El-Hameed Badawi, Cairo Governorate</p>
+        <img src="../static/images/jm.png" class="img-fluid img-thumbnail" width="250" height="200">
+      </div> -->
+      {% if restaurants %}
       {% for restaurant in restaurants %}
 
       <div class="col-md-4 mt-3">
@@ -84,6 +99,11 @@
       </div>
 
       {% endfor %}
+      {% else %}
+      <div class="text-center w-100 h-25">
+        <h3>No restaurants found!</h3>
+      </div>
+      {% endif %}
     </div>
   </div>
 </body>

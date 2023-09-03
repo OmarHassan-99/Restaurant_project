@@ -1,8 +1,10 @@
 
 /* Add a background color to the body */
+
 body {
   background-color: #f2f2f2;
 }/* Center the login form on the page */
+
 form {
   margin: 0 auto;
   width: 400px;
