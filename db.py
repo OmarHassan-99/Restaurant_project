@@ -137,3 +137,13 @@ def search_restaurants(connection, searchkey):
     '''
     cursor.execute(query, (searchkey,searchkey))
     return cursor.fetchall()
+
+
+def RemoveRestaurant(connection, id):
+    cursor = connection.cursor()
+    query = '''
+        DELETE FROM restaurants
+        WHERE id = (?)
+    '''
+    cursor.execute(query, (id,))
+    connection.commit()

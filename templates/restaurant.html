@@ -60,20 +60,11 @@
       {% endif %}
     </div>
   </div>
+
   <div class="container">
     {% include 'includes/alert.html' %}
     <div class="row">
-      <!-- <div class="row " id="menu_items">
-      <div class="col-2 col-md-6">
-        <h2>El 3abasseya Restaurant</h2>
-        <p>el abbaseya street, street 15 behind Ain Shams university</p>
-        <img src="../static/images/logo food light.png" class="img-fluid img-thumbnail" width="250" height="200">
-      </div>
-      <div class="col-2 col-md-6">
-        <h2>Just smash</h2>
-        <p>٥٤ شارع عمارات مصر التعمير متفرع من, Abd El-Hameed Badawi, Cairo Governorate</p>
-        <img src="../static/images/jm.png" class="img-fluid img-thumbnail" width="250" height="200">
-      </div> -->
+
       {% if restaurants %}
       {% for restaurant in restaurants %}
 
@@ -92,8 +83,16 @@
               height="200">
           </div>
           <div>
+            {% if username != 'admin' %}
             <a class="btn btn-primary float-end w-50"
               href="{{ url_for('getrestaurant', restaurant_id=restaurant[0]) }}">View</a>
+            {% else %}
+            <a class="btn btn-primary float-end w-25 mr-1"
+              href="{{ url_for('getrestaurant', restaurant_id=restaurant[0]) }}">View</a>
+            <a class="btn btn-danger float-end w-25 ml-1" href="{{ url_for('remove_restaurant', restaurant_id=restaurant[0]) }}">
+              Remove
+            </a>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -106,6 +105,18 @@
       {% endif %}
     </div>
   </div>
+  <script>
+    const removeBtn = document.querySelector('#removebtn');
+    //  Restaurant.
+    const title = document.getElementById('restaurant_title').innerHTML;
+    const id = document.getElementById('restaurant_id').innerHTML
+
+    removeBtn.addEventListener('click', () => {
+      document.getElementById('title').innerHTML = title;
+      document.getElementById('id').innerHTML = id
+
+    });
+  </script>
 </body>
 
 </html>

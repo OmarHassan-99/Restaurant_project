@@ -52,6 +52,10 @@ def getrestaurant(restaurant_id):
     else:
         return render_template('view-restaurant.html', restaurant=db.get_restaurant(connection, restaurant_id), reviews = db.get_reviews_for_restaurant(connection, restaurant_id))
 
+@app.route('/remove-restaurant/<restaurant_id>')
+def remove_restaurant(restaurant_id):
+    db.RemoveRestaurant(connection, restaurant_id)
+    return redirect(url_for('restaurant'))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -146,6 +150,8 @@ def uploadRest():
 
             title = request.form['title']
             description = request.form['description']
+            if len(description) > 40:
+                description = description[0:40] + '...'
 
             image_url = f"uploads/{restaurant_image.filename}"
             restaurant_image.save(os.path.join("static",image_url))
